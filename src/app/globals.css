@@ -58,6 +58,8 @@ body {
   background-color: var(--background);
   color: var(--text);
   transition: background-color 0.3s, color 0.3s;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
 }
 
 :root {
