@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { Button } from "../ui/button";
 
 const Navbar = () => {
   const id = useId();
@@ -22,16 +23,21 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between bg-transparent px-10 py-14 w-full h-16">
+      <div className="flex items-center justify-between bg-transparent px-10 py-14 w-full h-16 text-black dark:text-[#f7f7f7]">
         <div className="flex items-center">
           <Link className="flex items-center" href="/">
             <Wallet className="text-black dark:text-white" />
-            <h1 className="text-2xl font-bold text-black dark:text-[#f7f7f7]  ml-2">
+            <h1 className="text-2xl font-bold text-black dark:text-[#f7f7f7] ml-2">
               My Wallet
             </h1>
           </Link>
         </div>
-        <div>
+        <div className="flex items-center gap-4">
+          <Link href="/balance" className="rounded-md  ">
+            <Button variant="ghost" className="text-black dark:text-[#f7f7f7]">
+              Balance
+            </Button>
+          </Link>
           <div className="relative inline-grid h-9 grid-cols-[1fr_1fr] items-center text-sm font-medium">
             <Switch
               onClick={toggleTheme}

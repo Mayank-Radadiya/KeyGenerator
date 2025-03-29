@@ -3,7 +3,6 @@ import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { generateSeed } from "@/action/Seed";
 import { Copy, TrashIcon } from "lucide-react";
 import {
   Accordion,
@@ -12,24 +11,46 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { toast } from "sonner";
+import axios from "axios";
+
+interface SeedOutputProps {
+  secretKey: string;
+  publicKey: string;
+}
+[];
 
 export default function SeedInput() {
   const [seed, setSeed] = useState<string[] | null>([]);
   const id = useId();
   const [walletCount, setWalletCount] = useState<number>(1);
-  const [secretKey, setSecretKey] = useState<string | null>(null);
-  const [publicKey, setPublicKey] = useState<string | null>(null);
+  const [key, setKey] = useState<SeedOutputProps[] | null>([]);
 
-  const handleSecretKeyPrivateKey = () => {
-    const { publicKey, privateKey } = generateSeed(walletCount);
-    setSecretKey(privateKey);
-    setPublicKey(publicKey);
+  // Generate a more wallet
+  const handleSecretKeyPrivateKey = async () => {
+    const data = await axios.post("/api/getSeed", {
+      i: walletCount,
+      typeOfWallet: "solana",
+    });
+
+    const { privateKey, publicKey } = data.data;
+    setKey([
+      ...(key || []),
+      {
+        secretKey: privateKey,
+        publicKey: publicKey,
+      },
+    ]);
     toast.success("Secret key generated");
     setWalletCount(walletCount + 1);
   };
 
-  const handleGenerateSeed = () => {
-    const { mnemonicArray } = generateSeed();
+  const handleGenerateSeed = async () => {
+    const data = await axios.post("/api/getSeed", {
+      i: walletCount,
+      typeOfWallet: "solana",
+    });
+    const { mnemonicArray } = data.data;
+    setWalletCount(walletCount + 1);
     setSeed(mnemonicArray);
     handleSecretKeyPrivateKey();
     toast.success("Seed generated");
@@ -85,25 +106,33 @@ export default function SeedInput() {
             </Accordion>
           </div>
 
-          <p className="w-full border p-2 text-sm font-mono mt-8  rounded">
-            <strong>Public Key:</strong> {publicKey || "Not generated yet"}
-          </p>
-          <p className="w-full border p-2 text-sm font-mono rounded mt-2">
-            <strong>Secret Key:</strong> {secretKey || "Not generated yet"}
-          </p>
+          <div className="flex items-center justify-end mt-8 gap-x-5">
+            <Button onClick={handleSecretKeyPrivateKey}>Add More Wallet</Button>
 
-          <Button
-            variant="destructive"
-            className="mt-8"
-            onClick={handleClearSeed}
-          >
-            <TrashIcon
-              className="-ms-1 opacity-60 "
-              size={16}
-              aria-hidden="true"
-            />
-            Clear Wallet
-          </Button>
+            <Button variant="destructive" onClick={handleClearSeed}>
+              <TrashIcon
+                className="-ms-1 opacity-60 "
+                size={16}
+                aria-hidden="true"
+              />
+              Clear Wallet
+            </Button>
+          </div>
+
+          {key && key.length > 0 && (
+            <>
+              {key.map((item, index) => (
+                <div key={index}>
+                  <p className="w-full border p-2 text-sm font-mono mt-8 rounded">
+                    <strong>Public Key:</strong> {item.publicKey}
+                  </p>
+                  <p className="w-full border p-2 text-sm font-mono rounded mt-2">
+                    <strong>Secret Key:</strong> {item.secretKey}
+                  </p>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       ) : (
         <div className="mt-2">
