@@ -17,7 +17,6 @@ interface SeedOutputProps {
   secretKey: string;
   publicKey: string;
 }
-[];
 
 export default function SeedInput() {
   const [seed, setSeed] = useState<string[] | null>([]);

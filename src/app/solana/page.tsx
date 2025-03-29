@@ -1,9 +1,7 @@
 import SeedInput from "@/components/global/SeedInput";
-import { NextPage } from "next";
 
-interface PageProps {}
 
-const Page: NextPage<PageProps> = ({}) => {
+const Page = () => {
   return (
     <main className="min-h-screen text-black dark:text-[#f7f7f7] p-5">
       <div className="flex flex-col px-10 pt-14 justify-start w-full">
